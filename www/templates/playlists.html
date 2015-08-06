@@ -1,0 +1,23 @@
+
+<ion-view view-title="Klassresultat">
+	<ion-content ng-controller="singleClassController">
+
+		<select class="fancy-select" ng-model="selectedItem" ng-change="onchange()">
+			<option ng-repeat="klass in klasser">{{klass.className}}</option>
+		</select>
+		<div class="list">
+	  	<a class="item" ng-repeat="result in allresults">
+	  		<div class="row">
+	  			<div class="col placenumber">
+	  				<div class="placetext">{{result.place}}</div></div>
+	  			<div class="col col-90">
+	  				<h6>{{result.club}}</h6> {{result.name}} 
+	    			<span class="item-note">
+	      				{{result.result}}
+	    			</span>
+	    		</div>
+	    	</div>
+	  		</a> 	
+		</div>
+  	</ion-content>
+</ion-view>

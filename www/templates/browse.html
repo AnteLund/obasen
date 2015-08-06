@@ -1,0 +1,29 @@
+<ion-view view-title="Klubbresultat">
+  <ion-content ng-controller="clubController">
+	<div id="search-bar">
+    	<div class="item item-input-inset">
+      		<label class="item-input-wrapper" id="search-input">
+        		<i class="icon ion-search placeholder-icon"></i>
+        		<input type="text" placeholder="Search" ng-model="searchedItem" ng-change="onchange()" ng-keyup="$event.keyCode == 13 && onenter()">
+      		</label>
+    	</div>
+  	</div>
+  	<div class="list">
+	  	<div class="item item-divider">
+	  		<center><b>Resultat</b></center>
+	  	</div>
+	  	<a class="item" ng-repeat="runner in runners">
+	  		<div class="row">
+	  			<div class="col placenumber">
+	  				<div class="placetext">{{runner.place}}</div></div>
+	  			<div class="col col-80">
+	  				<h6>{{runner.class}}</h6> {{runner.name}} 
+	    			<span class="item-note">
+	      				{{runner.result}}
+	    			</span>
+	    		</div>
+	    	</div>
+	  		</a> 	
+		</div>
+  </ion-content>
+</ion-view>

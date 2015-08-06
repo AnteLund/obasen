@@ -1,0 +1,35 @@
+<ion-view view-title="Start">
+  <ion-content ng-controller="compController">
+  <div class="list list-inset">
+  	<div class="item item-divider">
+  		Tävlingsinformation:
+  	</div>
+    <a class="item">
+    	<i class="icon ion-star"></i> Namn:
+     {{information.name}}
+    </a>
+        <a class="item">
+    	 Organizer:
+     {{information.organizer}}
+
+    </a>
+        <a class="item">
+    	 Date:
+     {{information.date}} {{testtest}}
+    </a>
+</div>
+
+<div class="list list-inset">
+  	<div class="item item-divider">
+  		Senaste passeringarna:
+  	</div>
+  	<a class="item" ng-repeat="pass in lastpassing">
+  		<h6>{{pass.passtime}}</h6> {{pass.runnerName}} 
+    <span class="item-note">
+      {{pass.time}}
+    </span>
+
+  	</a>
+</div>
+  </ion-content>
+</ion-view>

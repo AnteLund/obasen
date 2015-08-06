@@ -1,0 +1,40 @@
+/* Empty. Add your own CSS if you like */
+.list .item {
+	padding: 0;
+}
+
+.placenumber {
+	font-size: 150%;
+	margin: 0 auto;
+	text-align: center;
+}
+.placetext {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 15px;
+}
+
+.fancy-select {
+width: 100%;
+}
+
+.buttons select {
+  z-index:1; 
+  background: none;
+  border: none;
+  border-bottom: 1px solid white;
+  color: white;
+}
+
+.buttons select option {
+  color: black;
+}
+
+.clubname {
+	position: absolute;
+	top: 5px;
+	left: 15px;	
+}
+
+
