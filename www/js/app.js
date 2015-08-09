@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers'])
+angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
 
 .factory('CompetitionService',function($scope,$http){
     $http.get("http://liveresultat.orientering.se/api.php?method=getcompetitioninfo&comp=10871").
@@ -18,7 +18,22 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   return {CompetitionInformation: $scope.information }
 
 })
+.service('compService', function(){
+    var competitionId = "";
 
+    var setCompetitionId = function(compId){
+      competitionId = compId;
+    }
+
+    var getCompetitionId = function(){
+      return competitionId;
+    }
+    return {
+      setCompetitionId: setCompetitionId,
+      getCompetitionId: getCompetitionId
+
+    }  
+})
 .controller("clubController", function($scope, $http){
   $scope.onenter = function(){
     console.log($scope.searchedItem);
@@ -34,39 +49,66 @@ angular.module('starter', ['ionic', 'starter.controllers'])
   }
 })
 
-.controller("compController", function($scope,$http){
-  $http.get("http://liveresultat.orientering.se/api.php?method=getcompetitioninfo&comp=10871").
-  success(function(data, status, headers, config) {
+.controller("compController", function($scope,$http, compService){
+
+  //on select change
+  $scope.onchange = function(){
+    compService.setCompetitionId($scope.selectedComp)
+    $http.get("http://liveresultat.orientering.se/api.php?method=getcompetitioninfo&comp=" + $scope.selectedComp).
+    success(function(data, status, headers, config) {
     $scope.information = data;
+    }).
+    error(function(data, status, headers, config) {
+      $scope.information = data;
+    })
+    $http.get("http://liveresultat.orientering.se/api.php?method=getlastpassings&comp=" + $scope.selectedComp).
+    success(function(data, status, headers, config) {
+      $scope.lastpassing = data.passings;
+    }).
+    error(function(data, status, headers, config) {
+    })
+
+  }
+
+
+
+  $http.get("http://liveresultat.orientering.se/api.php?method=getcompetitions").
+  success(function(data, status, headers, config) {
+    $scope.competitions = data.competitions;
   }).
   error(function(data, status, headers, config) {
-    $scope.information = data;
+    $scope.competitions = data.competitions;
   })
-  $http.get("http://liveresultat.orientering.se/api.php?method=getlastpassings&comp=10871").
-  success(function(data, status, headers, config) {
-    $scope.lastpassing = data.passings;
-  }).
-  error(function(data, status, headers, config) {
-  })
+
 })
 
-.controller("singleClassController", function($scope,$http){
+.controller("singleClassController", function($scope,$http, compService){
+  console.log("laddar klasser med compID" + compService.getCompetitionId())
+      $http.get("http://liveresultat.orientering.se/api.php?method=getclasses&comp=" + compService.getCompetitionId()).
+      success(function(data, status, headers, config) {
+        $scope.klasser = data.classes;
+      }).
+      error(function(data, status, headers, config) {
+      })
   $scope.onchange = function(){
-    console.log($scope.selectedItem);
-    console.log("http://liveresultat.orientering.se/api.php?comp=10259&method=getclassresults&unformattedTimes=true&class=" + $scope.selectedItem);
-    $http.get("http://liveresultat.orientering.se/api.php?comp=10259&method=getclassresults&unformattedTimes=true&class=" + $scope.selectedItem ).
+    console.log(compService.getCompetitionId());
+    console.log("http://liveresultat.orientering.se/api.php?comp=" + compService.getCompetitionId() + "&method=getclassresults&unformattedTimes=false&class=" + $scope.selectedItem);
+    $http.get("http://liveresultat.orientering.se/api.php?comp=" + compService.getCompetitionId() + "&method=getclassresults&unformattedTimes=false&class=" + $scope.selectedItem).
     success(function(data){
       $scope.classname = data.className;
       $scope.allresults = data.results;
     })
   }
-  $http.get("http://liveresultat.orientering.se/api.php?method=getclasses&comp=10259").
-  success(function(data, status, headers, config) {
-    $scope.klasser = data.classes;
-    console.log(data.classes);
-  }).
-  error(function(data, status, headers, config) {
-  })
+    $scope.loadclasses = function(){
+      console.log("laddar klasser med compID" + compService.getCompetitionId())
+      $http.get("http://liveresultat.orientering.se/api.php?method=getclasses&comp=" + compService.getCompetitionId()).
+      success(function(data, status, headers, config) {
+        $scope.klasser = data.classes;
+      }).
+      error(function(data, status, headers, config) {
+      })
+    }
+
 })
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -101,6 +143,14 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     }
   })
 
+  .state('app.home', {
+    url: "/home",
+    views: {
+      'menuContent': {
+        templateUrl: "templates/home.html",
+      }
+    }
+  })
   .state('app.browse', {
     url: "/browse",
     views: {
@@ -110,6 +160,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     }
   })
     .state('app.playlists', {
+      cache: false,
       url: "/playlists",
       views: {
         'menuContent': {
