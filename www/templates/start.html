@@ -1,0 +1,21 @@
+<ion-view view-title="Start">
+  <ion-content ng-controller="startController">
+  Startskärm<center>
+<br>
+<div class="bar bar-header bar-calm">
+  <h1 class="title">Obasen Liveresult</h1>
+</div>
+
+<div class="card">
+  <div class="item item-divider" >
+    Select a competition
+  </div>
+  <a href="#/app/search" class="item item-text-wrap"  ng-repeat="comp in competitions"  ng-click="onclick(comp)">
+    {{comp.name}}
+    <p>{{comp.date}} {{comp.organizer}}</p>
+</a>
+
+</div>
+  </center>
+  </ion-content>
+</ion-view>

@@ -72,6 +72,23 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
     }
 })
 
+
+.controller("startController", function($scope, $http, compService){
+  $http.get("http://liveresultat.orientering.se/api.php?method=getcompetitions").
+  success(function(data, status, headers, config) {
+    $scope.competitions = data.competitions;
+  }).
+  error(function(data, status, headers, config) {
+    $scope.competitions = data.competitions;
+  })
+  $scope.onclick = function(comp){
+    console.log(comp.id)
+    compService.setCompetitionId(comp.id)
+
+  }
+    
+
+})
 .controller("clubController", function($scope, $http){
   $scope.onenter = function(){
     console.log($scope.searchedItem);
@@ -88,20 +105,18 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
 })
 
 .controller("compController", function($filter, $scope,$http, $interval, compService, lastPassingService){
-  //on select change
-  $scope.onchange = function(){
-    compService.setCompetitionId($scope.selectedComp)
-    $http.get("http://liveresultat.orientering.se/api.php?method=getcompetitioninfo&comp=" + $scope.selectedComp).
-    success(function(data, status, headers, config) {
+  
+  $http.get("http://liveresultat.orientering.se/api.php?method=getcompetitioninfo&comp=" + compService.getCompetitionId()).
+  success(function(data, status, headers, config) {
+  $scope.information = data;
+  }).
+  error(function(data, status, headers, config) {
     $scope.information = data;
-    }).
-    error(function(data, status, headers, config) {
-      $scope.information = data;
-    })
+  })
 
     //getlasthash
 
-    $http.get("http://liveresultat.orientering.se/api.php?method=getlastpassings&comp=" + $scope.selectedComp + "&last_hash=" + lastPassingService.getLastPassingsHashesByClassId($scope.selectedComp)).
+    $http.get("http://liveresultat.orientering.se/api.php?method=getlastpassings&comp=" + compService.getCompetitionId() + "&last_hash=" + lastPassingService.getLastPassingsHashesByClassId($scope.selectedComp)).
     success(function(data, status, headers, config) {
       if(data.status === "OK"){
           lastPassingService.addLastPassingsHashes({compId: $scope.selectedComp, hash:data.hash, result: data.passings})
@@ -113,7 +128,7 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
     }).
     error(function(data, status, headers, config) {
     })
-  }
+  
 
   $http.get("http://liveresultat.orientering.se/api.php?method=getcompetitions").
   success(function(data, status, headers, config) {
@@ -177,8 +192,15 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
     controller: 'AppCtrl'
   })
 
+  .state('start', {
+    url: '/start',
+    controller: 'startController',
+    templateUrl: 'templates/start.html'
+  })
+
   .state('app.search', {
     url: "/search",
+    cache:false,
     views: {
       'menuContent': {
         templateUrl: "templates/search.html"
@@ -186,14 +208,6 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
     }
   })
 
-  .state('app.home', {
-    url: "/home",
-    views: {
-      'menuContent': {
-        templateUrl: "templates/home.html",
-      }
-    }
-  })
   .state('app.browse', {
     url: "/browse",
     views: {
@@ -223,5 +237,5 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
     }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/failedlink');
+  $urlRouterProvider.otherwise('/start');
 });
