@@ -1,7 +1,6 @@
 
 <ion-view view-title="Klassresultat">
 	<ion-content ng-controller="singleClassController">
-		<button ng-click ="loadclasses()"> load classes </button>
 		<select class="fancy-select" ng-model="selectedItem" ng-change="onchange()">
 			<option ng-repeat="klass in klasser">{{klass.className}}</option>
 		</select>

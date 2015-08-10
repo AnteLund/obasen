@@ -34,6 +34,44 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
 
     }  
 })
+.service('lastPassingService', function(){
+    var lastPassingHashes = [];
+
+    var addLastPassingsHashes = function(lastPassingHash){
+        lastPassingHashes.push(lastPassingHash);
+        console.log(lastPassingHash)
+    }
+
+    var getLastPassingsHashes = function(){
+
+      return lastPassingHashes;
+    }
+
+    var getLastPassingsHashesByClassId = function(compId){
+      for (var d = 0, len = lastPassingHashes.length; d <len; d+=1){
+        if(lastPassingHashes[d].compId === compId) {
+          return lastPassingHashes[d].hash
+        }
+      }
+      return null;
+    }
+
+    var getLastPassingResultByCLassId = function(compId){
+      for (var d = 0, len = lastPassingHashes.length; d <len; d+=1){
+        if(lastPassingHashes[d].compId === compId) {
+          return lastPassingHashes[d].result
+        }
+      }
+    }
+
+    return {
+      addLastPassingsHashes: addLastPassingsHashes,
+      getLastPassingsHashes: getLastPassingsHashes,
+      getLastPassingsHashesByClassId: getLastPassingsHashesByClassId,
+      getLastPassingResultByCLassId: getLastPassingResultByCLassId
+    }
+})
+
 .controller("clubController", function($scope, $http){
   $scope.onenter = function(){
     console.log($scope.searchedItem);
@@ -49,8 +87,7 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
   }
 })
 
-.controller("compController", function($scope,$http, compService){
-
+.controller("compController", function($filter, $scope,$http, $interval, compService, lastPassingService){
   //on select change
   $scope.onchange = function(){
     compService.setCompetitionId($scope.selectedComp)
@@ -61,16 +98,22 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
     error(function(data, status, headers, config) {
       $scope.information = data;
     })
-    $http.get("http://liveresultat.orientering.se/api.php?method=getlastpassings&comp=" + $scope.selectedComp).
+
+    //getlasthash
+
+    $http.get("http://liveresultat.orientering.se/api.php?method=getlastpassings&comp=" + $scope.selectedComp + "&last_hash=" + lastPassingService.getLastPassingsHashesByClassId($scope.selectedComp)).
     success(function(data, status, headers, config) {
-      $scope.lastpassing = data.passings;
+      if(data.status === "OK"){
+          lastPassingService.addLastPassingsHashes({compId: $scope.selectedComp, hash:data.hash, result: data.passings})
+          $scope.lastpassing = data.passings;
+      }
+      else{
+          $scope.lastpassing = lastPassingService.getLastPassingResultByCLassId($scope.selectedComp)
+      }
     }).
     error(function(data, status, headers, config) {
     })
-
   }
-
-
 
   $http.get("http://liveresultat.orientering.se/api.php?method=getcompetitions").
   success(function(data, status, headers, config) {
