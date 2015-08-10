@@ -105,15 +105,26 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
 })
 
 .controller("compController", function($filter, $scope,$http, $interval, compService, lastPassingService){
-  
+  $scope.showPassings = false
+
   $http.get("http://liveresultat.orientering.se/api.php?method=getcompetitioninfo&comp=" + compService.getCompetitionId()).
   success(function(data, status, headers, config) {
   $scope.information = data;
+  //Check if comp is more then 2 days old and hide last passings
+  var d = new Date()
+  d.setDate(d.getDate()-2)
+  var todaysDate = $filter('date')(d, 'yyyy-MM-dd');
+  if(data.date > todaysDate) $scope.showPassings = true
+  console.log($scope.showPassings)
   }).
   error(function(data, status, headers, config) {
     $scope.information = data;
+    
   })
+  //compare date
 
+  
+  
     //getlasthash
 
     $http.get("http://liveresultat.orientering.se/api.php?method=getlastpassings&comp=" + compService.getCompetitionId() + "&last_hash=" + lastPassingService.getLastPassingsHashesByClassId($scope.selectedComp)).
