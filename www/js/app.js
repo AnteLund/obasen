@@ -159,9 +159,16 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
       var minutes = Math.floor(seconds/60)
       seconds = seconds%60
 
+      if (seconds < 10){
+        seconds = "0" + seconds.toString() 
+      }
+
       if(hours === 0){
           return minutes.toString() + ":" + seconds.toString()
       }
+
+
+
       else return hours.toString() + ":" + minutes.toString() +":" + seconds.toString();
   }
   $scope.showShortResult = true
