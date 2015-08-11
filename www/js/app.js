@@ -154,9 +154,15 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
 .controller("singleClassController", function($scope,$http, compService){
   var timeSecToMinute = function(millseconds){
       var seconds = millseconds/100
+      var hours = Math.floor(seconds/3600)
+      seconds = seconds%3600
       var minutes = Math.floor(seconds/60)
-      var restseconds = seconds%60;
-      return minutes.toString() +":" + restseconds.toString();
+      seconds = seconds%60
+
+      if(hours === 0){
+          return minutes.toString() + ":" + seconds.toString()
+      }
+      else return hours.toString() + ":" + minutes.toString() +":" + seconds.toString();
   }
   $scope.showShortResult = true
   $scope.toggleSplitTimes = function(){
@@ -189,6 +195,8 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
       console.log(data.splitcontrols[0].code)
       for(var i = 0;i<data.results.length;i++){
        var fixedsplittimes = []
+       //Formatting starttime
+       data.results[i].start = timeSecToMinute(data.results[i].start)
         for(x = 0; x<data.splitcontrols.length; x++){
           fixedsplittimes.push({'code': data.splitcontrols[x].code, 'time': timeSecToMinute(data.results[i].splits[data.splitcontrols[x].code]), 'place':data.results[i].splits[data.splitcontrols[x].code + "_place"]})
         }
