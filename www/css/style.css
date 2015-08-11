@@ -35,6 +35,28 @@ width: 100%;
 	position: absolute;
 	top: 5px;
 	left: 15px;	
+
 }
+.position{
+  margin:auto;
+  min-width: 50px;
+  font-size: 150%;
+  text-align: center;
+  }
+.name {
+  min-width: 150px;
+  border-left: 1px solid lightgray;
+  text-align: left;
+  padding:10px;
+  font-size: 80%
 
-
+}
+.splittime { 
+  min-width: 75px; 
+  border-left: 1px solid lightgray;
+  padding:10px;
+  text-align: center;
+  font-size: 80%;
+}
+.row {
+}

@@ -152,6 +152,25 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
 })
 
 .controller("singleClassController", function($scope,$http, compService){
+  var timeSecToMinute = function(millseconds){
+      var seconds = millseconds/100
+      var minutes = Math.floor(seconds/60)
+      var restseconds = seconds%60;
+      return minutes.toString() +":" + restseconds.toString();
+  }
+  $scope.showShortResult = true
+  $scope.toggleSplitTimes = function(){
+    if($scope.showSplitTimes === true){
+      $scope.showShortResult = false
+    }
+    else if($scope.showSplitTimes === false){
+      $scope.showShortResult = true
+      
+    }
+    console.log($scope.showShortResult)
+  }
+
+
   console.log("laddar klasser med compID" + compService.getCompetitionId())
       $http.get("http://liveresultat.orientering.se/api.php?method=getclasses&comp=" + compService.getCompetitionId()).
       success(function(data, status, headers, config) {
@@ -165,7 +184,21 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
     $http.get("http://liveresultat.orientering.se/api.php?comp=" + compService.getCompetitionId() + "&method=getclassresults&unformattedTimes=false&class=" + $scope.selectedItem).
     success(function(data){
       $scope.classname = data.className;
-      $scope.allresults = data.results;
+      $scope.splitcontrols = data.splitcontrols;
+      var splitTimes = data.splitcontrols;
+      console.log(data.splitcontrols[0].code)
+      for(var i = 0;i<data.results.length;i++){
+       var fixedsplittimes = []
+        for(x = 0; x<data.splitcontrols.length; x++){
+          fixedsplittimes.push({'code': data.splitcontrols[x].code, 'time': timeSecToMinute(data.results[i].splits[data.splitcontrols[x].code]), 'place':data.results[i].splits[data.splitcontrols[x].code + "_place"]})
+        }
+        
+        console.log(fixedsplittimes)
+        data.results[i].splits = fixedsplittimes
+      }
+      console.log(timeSecToMinute(116000))
+      console.log(data.results)
+      $scope.allresults = data.results;     
     })
   }
     $scope.loadclasses = function(){

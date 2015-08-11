@@ -1,10 +1,15 @@
 
 <ion-view view-title="Klassresultat">
 	<ion-content ng-controller="singleClassController">
+
+
+<ion-toggle ng-model="showSplitTimes" ng-change="toggleSplitTimes()">Show splittimes</ion-toggle>
+
 		<select class="fancy-select" ng-model="selectedItem" ng-change="onchange()">
 			<option ng-repeat="klass in klasser">{{klass.className}}</option>
 		</select>
-		<div class="list">
+
+		<div class="list" ng-show="showShortResult">
 	  	<a class="item" ng-repeat="result in allresults">
 	  		<div class="row">
 	  			<div class="col placenumber">
@@ -17,6 +22,28 @@
 	    		</div>
 	    	</div>
 	  		</a> 	
+		</div>
+
+
+		<div ng-show="showSplitTimes">
+			<ion-scroll direction="xy" has-bouncing="false" locking="false" scrollbar-y="false">
+			<div class=" row row-item ">
+				<div class="col position">P</div>
+				<div class="col name ">Name</div>
+				<div class="col splittime">Start</div>
+				<div class="col splittime" ng-repeat="splitcontrol in splitcontrols">{{splitcontrol.name}}</div>
+				<div class="col splittime">Finish</div>
+				<div class="col splittime">Timeplus</div>
+			</div>
+			<div class="row" ng-repeat="result in allresults">
+				<div class="col position">{{result.place}}</div>
+				<div class="col name"><h6>{{result.club}}</h6> {{result.name}} </div>
+				<div class="col splittime">{{result.start}}</div>
+				<div class="col splittime" ng-repeat="splits in result.splits">{{splits.time}}({{splits.place}}) </div>
+				<div class="col splittime">{{result.result}}</div>
+				<div class="col splittime">{{result.timeplus}}</div>
+			</div>
+			</ion-scroll>				
 		</div>
   	</ion-content>
 </ion-view>
