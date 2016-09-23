@@ -32,7 +32,7 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
       setCompetitionId: setCompetitionId,
       getCompetitionId: getCompetitionId
 
-    }  
+    }
 })
 .service('lastPassingService', function(){
     var lastPassingHashes = [];
@@ -86,7 +86,7 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
     compService.setCompetitionId(comp.id)
 
   }
-    
+
 
 })
 .controller("clubController", function($scope, $http){
@@ -97,16 +97,18 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
       $scope.clubName = data.clubName;
       $scope.runners = data.results;
       console.log(data);
+      console.log("http://liveresultat.orientering.se/api.php?comp=10967&method=getclubresults&formatedTimes=true&club=" + $scope.searchedItem);
     }).
     error(function(data, status, headers, config) {
       $scope.information = data;
-    }) 
+    })
   }
 })
 
+
 .controller("compController", function($filter, $scope,$http, $interval, compService, lastPassingService){
   $scope.showPassings = false
-
+  $scope.showClassResult = true;
   $http.get("http://liveresultat.orientering.se/api.php?method=getcompetitioninfo&comp=" + compService.getCompetitionId()).
   success(function(data, status, headers, config) {
   $scope.information = data;
@@ -119,12 +121,12 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
   }).
   error(function(data, status, headers, config) {
     $scope.information = data;
-    
+
   })
   //compare date
 
-  
-  
+
+
     //getlasthash
 
     $http.get("http://liveresultat.orientering.se/api.php?method=getlastpassings&comp=" + compService.getCompetitionId() + "&last_hash=" + lastPassingService.getLastPassingsHashesByClassId($scope.selectedComp)).
@@ -139,7 +141,7 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
     }).
     error(function(data, status, headers, config) {
     })
-  
+
 
   $http.get("http://liveresultat.orientering.se/api.php?method=getcompetitions").
   success(function(data, status, headers, config) {
@@ -160,7 +162,7 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
       seconds = seconds%60
 
       if (seconds < 10){
-        seconds = "0" + seconds.toString() 
+        seconds = "0" + seconds.toString()
       }
 
       if(hours === 0){
@@ -178,7 +180,7 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
     }
     else if($scope.showSplitTimes === false){
       $scope.showShortResult = true
-      
+
     }
     console.log($scope.showShortResult)
   }
@@ -199,7 +201,6 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
       $scope.classname = data.className;
       $scope.splitcontrols = data.splitcontrols;
       var splitTimes = data.splitcontrols;
-      console.log(data.splitcontrols[0].code)
       for(var i = 0;i<data.results.length;i++){
        var fixedsplittimes = []
        //Formatting starttime
@@ -207,13 +208,9 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
         for(x = 0; x<data.splitcontrols.length; x++){
           fixedsplittimes.push({'code': data.splitcontrols[x].code, 'time': timeSecToMinute(data.results[i].splits[data.splitcontrols[x].code]), 'place':data.results[i].splits[data.splitcontrols[x].code + "_place"]})
         }
-        
-        console.log(fixedsplittimes)
         data.results[i].splits = fixedsplittimes
       }
-      console.log(timeSecToMinute(116000))
-      console.log(data.results)
-      $scope.allresults = data.results;     
+      $scope.allresults = data.results;
     })
   }
     $scope.loadclasses = function(){
@@ -224,6 +221,7 @@ angular.module('starter', ['ionic','ionic-material', 'starter.controllers'])
       }).
       error(function(data, status, headers, config) {
       })
+      console.log(data);
     }
 
 })

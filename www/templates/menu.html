@@ -19,19 +19,15 @@
     <ion-header-bar class="bar-calm">
       <h1 class="title">Obasen liveresultat</h1>
     </ion-header-bar>
-    <ion-content>
+    <ion-content ng-controller="menuController">
       <ion-list>
-          <select class="fancy-select">
-      <option> Tävling 1</option>
-      <option> Tävling 2</option>
-    </select>
         <ion-item nav-clear menu-close href="#/app/search">
           Start
         </ion-item>
         <ion-item nav-clear menu-close href="#/app/browse">
           Klubbresultat
         </ion-item>
-        <ion-item nav-clear menu-close href="#/app/playlists" ng-select="loadclasses()">
+        <ion-item nav-clear menu-close href="#/app/playlists" ng-select="loadclasses()" ng-show="showClassResult">
           Klassresultat
         </ion-item>
 
